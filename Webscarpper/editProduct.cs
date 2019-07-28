@@ -121,21 +121,7 @@ namespace Webscarpper
                 Reader55.Read();
                 foreigID = Reader55["id"].ToString();
                 source1.Conn.Close();
-                if (barcodetxtbx.Text != "")
-                {
-                    source1.Conn.Close();
-                    string command1 = "SELECT id, productname FROM products WHERE barcode = @barcode";
-                    MySqlCommand Comm1 = new MySqlCommand(command1, source1.Conn);
-                    Comm1.Parameters.AddWithValue("@barcode", barcodetxtbx.Text);
-                    source1.MySqlCon();
-                    MySqlDataReader Reader1 = Comm1.ExecuteReader();
-                    Reader1.Read();
-                    idnorepeat = Reader1["id"].ToString();
-                    repeatedname = Reader1["productname"].ToString();
-                    source1.Conn.Close();
-                }
-                else if (barcodetxtbx.Text == "")
-                {
+                
                     string command1 = "SELECT id, productname FROM products WHERE id = @id";
                     MySqlCommand Comm1 = new MySqlCommand(command1, source1.Conn);
                     Comm1.Parameters.AddWithValue("@id", ProductIdtxtbx.Text);
@@ -145,7 +131,7 @@ namespace Webscarpper
                     idnorepeat = Reader1["id"].ToString();
                     repeatedname = Reader1["productname"].ToString();
                     source1.Conn.Close();
-                }
+                //}
 
                 if (idnorepeat == ProductIdtxtbx.Text && repeatedname == Nametxtbx22.Text && barcodetxtbx.Text != "")
                 {
@@ -186,7 +172,7 @@ namespace Webscarpper
                     source1.Conn.Close();
                     source1.MySqlCon();
                     MySqlCommand Icom1 = source1.Conn.CreateCommand();
-                    Icom1.CommandText = "UPDATE products SET productname = @productname, foreignID = @foreignID WHERE id = @id";
+                    Icom1.CommandText = "UPDATE products SET productname = @productname, barcode = NULL ,foreignID = @foreignID WHERE id = @id";
                     Icom1.Parameters.AddWithValue("@productname", Nametxtbx22.Text);
                     Icom1.Parameters.AddWithValue("@foreignID", foreigID);
                     Icom1.Parameters.AddWithValue("@id", ProductIdtxtbx.Text);
@@ -253,7 +239,6 @@ namespace Webscarpper
                         if (Updated == DialogResult.OK)
                         {
                             Close();
-                            MainPage.AutoCompleteName();
                         }
                     }
 

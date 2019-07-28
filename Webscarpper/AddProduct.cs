@@ -13,7 +13,7 @@ namespace Webscarpper
 {
     public partial class AddProduct : Form
     {
-        MainPage MainPage = new MainPage();
+        
         Gethtml source = new Gethtml();
         bool idlength, idlength2;
         bool idrep = false;
@@ -139,7 +139,7 @@ namespace Webscarpper
                         else if (another == DialogResult.No)
                         {
                             Close();
-                            MainPage.AutoCompleteName();
+                            
                         }
                     }
 
@@ -171,7 +171,7 @@ namespace Webscarpper
                         else if (another == DialogResult.No)
                         {
                             Close();
-                            MainPage.AutoCompleteName();
+                            
                         }
                     }
                 }
