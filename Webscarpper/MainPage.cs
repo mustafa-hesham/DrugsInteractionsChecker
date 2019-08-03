@@ -440,11 +440,7 @@ namespace Webscarpper
             addDrug.ShowDialog();
         }
 
-        private void AddProductToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AddProduct addProduct = new AddProduct();
-            addProduct.ShowDialog();
-        }
+        
 
         private void EditDrugToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -504,16 +500,26 @@ namespace Webscarpper
             t2.Show("Click here or press F7 to clear list.", RemoveAllbtn);
         }
 
-        private void EditBarcodeToolStripMenuItem_Click(object sender, EventArgs e)
+        
+
+
+        private void EditBarcodeToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             editProduct editProduct = new editProduct();
             editProduct.ShowDialog();
+        }
+
+        private void AddProductToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            AddProduct addProduct = new AddProduct();
+            addProduct.ShowDialog();
         }
 
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             about about = new about();
             about.ShowDialog();
+
         }
         //Function end.
     }

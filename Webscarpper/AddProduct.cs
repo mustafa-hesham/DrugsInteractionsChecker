@@ -17,6 +17,7 @@ namespace Webscarpper
         Gethtml source = new Gethtml();
         bool idlength, idlength2;
         bool idrep = false;
+        bool barcoderep = false;
         public AddProduct()
         {
             InitializeComponent();
@@ -94,6 +95,14 @@ namespace Webscarpper
             Comm3.Parameters.AddWithValue("@barcode", barcodeTxtbx.Text);
             source.MySqlCon();
             MySqlDataReader Reader3 = Comm3.ExecuteReader();
+                if (Reader3.HasRows)
+                {
+                    barcoderep = true;
+                }
+                else
+                {
+                    barcoderep = false;
+                }
             source.Conn.Close();
                 string command31 = "SELECT id FROM products WHERE productname = @productname";
                 MySqlCommand Comm31 = new MySqlCommand(command31, source.Conn);
@@ -113,7 +122,7 @@ namespace Webscarpper
                 
                 source.Conn.Close();
 
-                if (idlength2 && !(Reader3.HasRows) && !idrep && barcodeTxtbx.Text != "")
+                if (idlength2 && !barcoderep && !idrep && barcodeTxtbx.Text != "")
             {
                 source.Conn.Close();
                 source.MySqlCon();
@@ -145,7 +154,7 @@ namespace Webscarpper
 
 
             }
-            else if (idlength2 && !(Reader3.HasRows) && !idrep && barcodeTxtbx.Text == "")
+            else if (idlength2 && !barcoderep && !idrep && barcodeTxtbx.Text == "")
                 {
                     source.Conn.Close();
                     source.MySqlCon();
