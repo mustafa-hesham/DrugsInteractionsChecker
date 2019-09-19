@@ -24,6 +24,9 @@ namespace Webscarpper
         List<string> severities = new List<string>();
         List<string> drug1 = new List<string>();
         List<string> drug2 = new List<string>();
+        bool firsttable = false;
+        bool secondtable = false;
+
         public MainPage()
         {
             InitializeComponent();
@@ -34,6 +37,7 @@ namespace Webscarpper
 
         public void CheckInteractions()
         {
+            listBox1.Refresh();
             interactions.Clear();
             severities.Clear();
             drug1.Clear();
@@ -58,7 +62,7 @@ namespace Webscarpper
                         string seconddrug2 = seconddrug1[0].Trim();
 
                         Comm.Parameters.AddWithValue("@insertedname", firstdrug2);
-                        Comm.Parameters.AddWithValue("@secondname", seconddrug2);
+                        Comm.Parameters.AddWithValue("@secondname", seconddrug2 );
                         source.MySqlCon();
                         MySqlDataReader Reader = Comm.ExecuteReader();
                         while (Reader.Read())
@@ -80,13 +84,40 @@ namespace Webscarpper
             }
             if (interactions.Count() == 0)
             {
+                descriptionTxt.Clear();
+                interactorsTX.Clear();
+                severityTXT.Clear();
+                severityTXT.BackColor = System.Drawing.Color.White;
+                drugNametxtbx.Focus();
                 MessageBox.Show("There are no interactions recorded in the database between these drugs!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
             }
             else
             {
                 descriptionTxt.Text = interactions[0].ToString();
                 severityTXT.Text = severities[0].ToString();
                 interactorsTX.Text = drug1[0].ToString() + " <> " + drug2[0].ToString();
+            }
+
+            for (int ge = 0; ge < interactions.Count; ge++)
+            {
+                for (int fr = 0; fr < interactions.Count; fr++)
+                {
+                    if (interactions[ge].ToString() == interactions[fr].ToString() && drug1[ge].ToString().Length < drug1[fr].ToString().Length)
+                    {
+                        severities.RemoveAt(fr);
+                        interactions.RemoveAt(fr);
+                        drug1.RemoveAt(fr);
+                        drug2.RemoveAt(fr);
+                    }
+                    else if (interactions[ge].ToString() == interactions[fr].ToString() && drug1[ge].ToString().Length > drug1[fr].ToString().Length)
+                    {
+                        severities.RemoveAt(ge);
+                        interactions.RemoveAt(ge);
+                        drug1.RemoveAt(ge);
+                        drug2.RemoveAt(ge);
+                    }
+                }
             }
 
             for (int t = 0; t < (interactions.Count() - 1); t++)
@@ -106,7 +137,20 @@ namespace Webscarpper
 
         private void Invokebtn_Click(object sender, EventArgs e)
         {
+            listBox1.Refresh();
+            for (int fe = 0; fe < listBox1.Items.Count; fe++)
+            {
+                listBox1.Refresh();
+                string firstdrug = listBox1.Items[fe].ToString();
+                string[] firstdrug1 = firstdrug.Split('(');
+                string firstdrug2 = firstdrug1[0].Trim();
+                if (firstdrug2.Length <= 2) listBox1.Items.RemoveAt(fe);
+                else if (firstdrug2 == "vitamin") listBox1.Items.RemoveAt(fe);
+                listBox1.Refresh();
+            }
+            listBox1.Refresh();
             CheckInteractions();
+            listBox1.Refresh();
             drugNametxtbx.Focus();
         }
 
@@ -191,39 +235,109 @@ namespace Webscarpper
                         string drugname16 = Reader16["name"].ToString();
                         string pregCat16 = Reader16["pregnancyCat"].ToString();
                         source.Conn.Close();
+                        string[] tempnameP = drugname16.Split('-');
+                        //------------------------------------------------------
+                        for (int sp = 0; sp < tempnameP.Count(); sp++)
+                        {
+                            source.Conn.Close();
+                            string command4 = "SELECT pregnancyCat FROM drugsbasic2 WHERE name = @name";
+                            MySqlCommand Comm4 = new MySqlCommand(command4, source.Conn);
+                            Comm4.Parameters.AddWithValue("@name", tempnameP[sp].ToString());
+                            source.MySqlCon();
+                            MySqlDataReader Reader4 = Comm4.ExecuteReader();
+
+                            if (Reader4.HasRows)
+                            {
+                                Reader4.Read();
+                                pregCatstr = Reader4["pregnancyCAT"].ToString();
+                                source.Conn.Close();
+                                if (pregCatstr == "" || pregCatstr == " " || pregCatstr == "   ") pregCatstr = "N/A";
+                                source.Conn.Close();
+                            }
+                            
+                            else
+                            {
+                                pregCatstr = "N/A";
+                                source.Conn.Close();
+                            }
+                            source.Conn.Close();
+                            listBox1.Items.Add(tempnameP[sp].ToString() + " (FDA-PregCat: " + pregCatstr + ")");
+                            listBox1.Refresh();
+                            drugNametxtbx.Clear();
+                            drugNametxtbx.Focus();
+                        }
+                        //------------------------------------------------------
                         if (pregCat16 == "" || pregCat16 == " " || pregCat16 == "   ") pregCat16 = "N/A";
-                        listBox1.Items.Add(drugname16 + " (FDA-PregCat: " + pregCat16 + ")");
+                        if (tempnameP.Count() > 1)
+                        {
+                            listBox1.Items.Add(drugname16 + " (FDA-PregCat: " + pregCat16 + ")");
+                        }
+                        
                         listBox1.Refresh();
                         drugNametxtbx.Clear();
                         drugNametxtbx.Focus();
                     }
                     else
                     {
-                        source.Conn.Close();
-                        string command4 = "SELECT pregnancyCat FROM drugsbasic2 WHERE name = @name";
-                        MySqlCommand Comm4 = new MySqlCommand(command4, source.Conn);
-                        Comm4.Parameters.AddWithValue("@name", drugNametxtbx.Text);
-                        source.MySqlCon();
-                        MySqlDataReader Reader4 = Comm4.ExecuteReader();
+                        string completename = drugNametxtbx.Text;
+                        string[] tempdrugs = drugNametxtbx.Text.Split('-');
+                        for (int sp = 0; sp < tempdrugs.Count(); sp++)
+                        {
+                            source.Conn.Close();
+                            string command44 = "SELECT pregnancyCat FROM drugsbasic2 WHERE name = @name";
+                            MySqlCommand Comm44 = new MySqlCommand(command44, source.Conn);
+                            Comm44.Parameters.AddWithValue("@name", tempdrugs[sp].ToString());
+                            source.MySqlCon();
+                            MySqlDataReader Reader44 = Comm44.ExecuteReader();
 
-                        if (Reader4.HasRows)
-                        {
-                            Reader4.Read();
-                            pregCatstr = Reader4["pregnancyCAT"].ToString();
+                            if (Reader44.HasRows)
+                            {
+                                Reader44.Read();
+                                pregCatstr = Reader44["pregnancyCAT"].ToString();
+                                source.Conn.Close();
+                                if (pregCatstr == "" || pregCatstr == " " || pregCatstr == "   ") pregCatstr = "N/A";
+                                source.Conn.Close();
+                            }
+                            else
+                            {
+                                pregCatstr = "N/A";
+                                source.Conn.Close();
+                            }
                             source.Conn.Close();
-                            if (pregCatstr == "" || pregCatstr == " " || pregCatstr == "   ") pregCatstr = "N/A";
-                            source.Conn.Close();
+                            listBox1.Items.Add(tempdrugs[sp].ToString() + " (FDA-PregCat: " + pregCatstr + ")");
+                            listBox1.Refresh();
+                            drugNametxtbx.Clear();
+                            drugNametxtbx.Focus();
                         }
-                        else
+                        if (tempdrugs.Count() > 1)
                         {
-                            pregCatstr = "N/A";
                             source.Conn.Close();
+                            string command4 = "SELECT pregnancyCat FROM drugsbasic2 WHERE name = @name";
+                            MySqlCommand Comm4 = new MySqlCommand(command4, source.Conn);
+                            Comm4.Parameters.AddWithValue("@name", completename);
+                            source.MySqlCon();
+                            MySqlDataReader Reader4 = Comm4.ExecuteReader();
+
+                            if (Reader4.HasRows)
+                            {
+                                Reader4.Read();
+                                pregCatstr = Reader4["pregnancyCAT"].ToString();
+                                source.Conn.Close();
+                                if (pregCatstr == "" || pregCatstr == " " || pregCatstr == "   ") pregCatstr = "N/A";
+                                source.Conn.Close();
+                            }
+                            else
+                            {
+                                pregCatstr = "N/A";
+                                source.Conn.Close();
+                            }
+                            source.Conn.Close();
+                            listBox1.Items.Add(completename + " (FDA-PregCat: " + pregCatstr + ")");
+                            listBox1.Refresh();
+                            drugNametxtbx.Clear();
+                            drugNametxtbx.Focus();
                         }
-                        source.Conn.Close();
-                        listBox1.Items.Add(drugNametxtbx.Text + " (FDA-PregCat: " + pregCatstr + ")");
-                        listBox1.Refresh();
-                        drugNametxtbx.Clear();
-                        drugNametxtbx.Focus();
+                        
                     }
                    
                 }
@@ -246,8 +360,44 @@ namespace Webscarpper
                 string drugname16 = Reader16["name"].ToString();
                 string pregCat16 = Reader16["pregnancyCat"].ToString();
                 source.Conn.Close();
-                if (pregCat16 == "" || pregCat16 == " " || pregCat16 == "   ") pregCat16 = "N/A";
-                listBox1.Items.Add(drugname16 + " (FDA-PregCat: " + pregCat16 + ")");
+                    string[] tempnameP = drugname16.Split('-');
+                    //------------------------------------------------------
+                    for (int sp = 0; sp < tempnameP.Count(); sp++)
+                    {
+                        source.Conn.Close();
+                        string command4 = "SELECT pregnancyCat FROM drugsbasic2 WHERE name = @name";
+                        MySqlCommand Comm4 = new MySqlCommand(command4, source.Conn);
+                        Comm4.Parameters.AddWithValue("@name", tempnameP[sp].ToString());
+                        source.MySqlCon();
+                        MySqlDataReader Reader4 = Comm4.ExecuteReader();
+
+                        if (Reader4.HasRows)
+                        {
+                            Reader4.Read();
+                            pregCatstr = Reader4["pregnancyCAT"].ToString();
+                            source.Conn.Close();
+                            if (pregCatstr == "" || pregCatstr == " " || pregCatstr == "   ") pregCatstr = "N/A";
+                            source.Conn.Close();
+                        }
+
+                        else
+                        {
+                            pregCatstr = "N/A";
+                            source.Conn.Close();
+                        }
+                        source.Conn.Close();
+                        listBox1.Items.Add(tempnameP[sp].ToString() + " (FDA-PregCat: " + pregCatstr + ")");
+                        listBox1.Refresh();
+                        drugNametxtbx.Clear();
+                        drugNametxtbx.Focus();
+                    }
+                    //------------------------------------------------------
+                    if (pregCat16 == "" || pregCat16 == " " || pregCat16 == "   ") pregCat16 = "N/A";
+                    if (tempnameP.Count() > 1)
+                    {
+                        listBox1.Items.Add(drugname16 + " (FDA-PregCat: " + pregCat16 + ")");
+                    }
+                   
                 listBox1.Refresh();
                 drugNametxtbx.Clear();
                 drugNametxtbx.Focus();
@@ -261,6 +411,16 @@ namespace Webscarpper
 
             if (e.KeyCode == Keys.F11)
             {
+                for (int fe = 0; fe < listBox1.Items.Count; fe++)
+                {
+                    listBox1.Refresh();
+                    string firstdrug = listBox1.Items[fe].ToString();
+                    string[] firstdrug1 = firstdrug.Split('(');
+                    string firstdrug2 = firstdrug1[0].Trim();
+                    if (firstdrug2.Length <= 2) listBox1.Items.RemoveAt(fe);
+                    else if (firstdrug2 == "vitamin") listBox1.Items.RemoveAt(fe);
+                    listBox1.Refresh();
+                }
                 CheckInteractions();
                 drugNametxtbx.Focus();
             }
@@ -520,6 +680,12 @@ namespace Webscarpper
             about about = new about();
             about.ShowDialog();
 
+        }
+
+        private void CombineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Combine combine = new Combine();
+            combine.ShowDialog();
         }
         //Function end.
     }

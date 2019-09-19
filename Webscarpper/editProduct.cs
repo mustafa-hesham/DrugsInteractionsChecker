@@ -150,7 +150,7 @@ namespace Webscarpper
                     if (Updated == DialogResult.OK)
                     {
                         Close();
-                        MainPage.AutoCompleteName();
+                        //MainPage.AutoCompleteName();
                     }
                 }
                 else if (idnorepeat != ProductIdtxtbx.Text && barcodetxtbx.Text != "")
@@ -183,7 +183,7 @@ namespace Webscarpper
                     if (Updated == DialogResult.OK)
                     {
                         Close();
-                        MainPage.AutoCompleteName();
+                        //MainPage.AutoCompleteName();
                     }
                 }
                 else if (idnorepeat == ProductIdtxtbx.Text && repeatedname != Nametxtbx22.Text && barcodetxtbx.Text != "")
@@ -206,7 +206,7 @@ namespace Webscarpper
                         if (Updated == DialogResult.OK)
                         {
                             Close();
-                            MainPage.AutoCompleteName();
+                            //MainPage.AutoCompleteName();
                         }
                     }
 

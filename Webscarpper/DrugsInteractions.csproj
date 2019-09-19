@@ -92,6 +92,12 @@
     <Compile Include="AddProduct.Designer.cs">
       <DependentUpon>AddProduct.cs</DependentUpon>
     </Compile>
+    <Compile Include="Combine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Combine.Designer.cs">
+      <DependentUpon>Combine.cs</DependentUpon>
+    </Compile>
     <Compile Include="editPregCat.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,6 +130,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AddProduct.resx">
       <DependentUpon>AddProduct.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Combine.resx">
+      <DependentUpon>Combine.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="editPregCat.resx">
       <DependentUpon>editPregCat.cs</DependentUpon>

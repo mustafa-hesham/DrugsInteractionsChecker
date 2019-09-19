@@ -154,7 +154,7 @@ namespace Webscarpper
 
 
             }
-            else if (idlength2 && !barcoderep && !idrep && barcodeTxtbx.Text == "")
+            else if (idlength2 && !idrep && barcodeTxtbx.Text == "")
                 {
                     source.Conn.Close();
                     source.MySqlCon();
